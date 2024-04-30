@@ -60,7 +60,8 @@ class _TaskListScreenState extends State<TaskListScreen> {
         },
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () async {
+        // Aqui mudamos onPressed para onTap
+        onTap: () async {
           final newTaskTitle = await Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => AddTaskScreen()),
@@ -98,11 +99,11 @@ class AddTaskScreen extends StatelessWidget {
               ),
             ),
             SizedBox(height: 16.0),
-            RaisedButton(
-              onPressed: () {
+            AddTaskScreen(
+              onTap: () {
                 Navigator.pop(context, _textEditingController.text);
               },
-              child: Text('Add'),
+              label: Text('Add'),
             ),
           ],
         ),
