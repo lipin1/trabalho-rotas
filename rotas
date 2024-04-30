@@ -1,0 +1,112 @@
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(MyApp());
+}
+
+class Task {
+  String title;
+
+  Task(this.title);
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'To-Do List',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: TaskListScreen(),
+    );
+  }
+}
+
+class TaskListScreen extends StatefulWidget {
+  @override
+  _TaskListScreenState createState() => _TaskListScreenState();
+}
+
+class _TaskListScreenState extends State<TaskListScreen> {
+  List<Task> tasks = [];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('To-Do List'),
+      ),
+      body: ListView.builder(
+        itemCount: tasks.length,
+        itemBuilder: (context, index) {
+          return Dismissible(
+            key: Key(tasks[index].title),
+            onDismissed: (direction) {
+              setState(() {
+                tasks.removeAt(index);
+              });
+            },
+            background: Container(
+              color: Colors.red,
+              child: Icon(Icons.delete),
+              alignment: Alignment.centerRight,
+              padding: EdgeInsets.only(right: 16.0),
+            ),
+            child: ListTile(
+              title: Text(tasks[index].title),
+            ),
+          );
+        },
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+          final newTaskTitle = await Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => AddTaskScreen()),
+          );
+          if (newTaskTitle != null) {
+            setState(() {
+              tasks.add(Task(newTaskTitle));
+            });
+          }
+        },
+        child: Icon(Icons.add),
+      ),
+    );
+  }
+}
+
+class AddTaskScreen extends StatelessWidget {
+  final TextEditingController _textEditingController = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Add Task'),
+      ),
+      body: Padding(
+        padding: EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            TextField(
+              controller: _textEditingController,
+              decoration: InputDecoration(
+                labelText: 'Task Title',
+              ),
+            ),
+            SizedBox(height: 16.0),
+            RaisedButton(
+              onPressed: () {
+                Navigator.pop(context, _textEditingController.text);
+              },
+              child: Text('Add'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
